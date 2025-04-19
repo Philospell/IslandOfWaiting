@@ -25,7 +25,7 @@ scene.add(ambientLight)
 
 // Directional light
 const directionalLight = new THREE.DirectionalLight('#ffffff', 1.5)
-directionalLight.position.set(3, 2, -8)
+directionalLight.position.set(-3, 2, 8)
 scene.add(directionalLight)
 
 /**
@@ -57,7 +57,7 @@ window.addEventListener('resize', () => {
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 10000)
 camera.position.x = 0
 camera.position.y = 0
-camera.position.z = 15
+camera.position.z = 10
 scene.add(camera)
 
 // Controls
@@ -104,7 +104,7 @@ image.onload = () => {
     const gridSize = 100
     const cubeSize = 0.15
     const depthRange = 8.0
-    const spacing = 0.1
+    const spacing = 0.08
 
     // 큐브들을 저장할 배열
     const cubes = []
