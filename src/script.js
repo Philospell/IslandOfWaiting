@@ -63,6 +63,10 @@ scene.add(camera)
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
+controls.minDistance = 5
+controls.maxDistance = 20
+controls.maxPolarAngle = Math.PI / 2 // 수직 회전 각도 제한 (90도)
+controls.minPolarAngle = Math.PI / 4 // 최소 수직 회전 각도 (45도)
 
 /**
  * Renderer
