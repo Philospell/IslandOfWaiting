@@ -177,14 +177,27 @@ image.onload = () => {
     scene.add(water)
 
     // 클릭 이벤트 수정
+    let clickCount = 0;
     window.addEventListener('click', () => {
-        isScattered = !isScattered
+        clickCount++;
 
-        cubes.forEach(cube => {
-            // 목표 위치 업데이트
-            cube.userData.targetZ = isScattered ? (Math.random() - 0.5) * depthRange : 0
-        })
-    })
+        if (clickCount === 1) {
+            // 첫 번째 클릭: 큐브들을 펼치기
+            isScattered = true;
+            cubes.forEach(cube => {
+                cube.userData.targetZ = (Math.random() - 0.5) * depthRange;
+                cube.userData.isFalling = false;
+            });
+        } else if (clickCount === 2) {
+            // 두 번째 클릭: 큐브들을 바다로 떨어뜨리기
+            isScattered = false;
+            cubes.forEach(cube => {
+                cube.userData.targetZ = -4; // 바다 높이
+                cube.userData.isFalling = true;
+                cube.userData.fallSpeed = Math.random() * 0.1 + 0.05; // 랜덤한 낙하 속도
+            });
+        }
+    });
 
     // 애니메이션을 위한 tick 함수 수정
     const tick = () => {
@@ -198,13 +211,26 @@ image.onload = () => {
 
         // 큐브 애니메이션 업데이트
         cubes.forEach(cube => {
-            // 현재 위치에서 목표 위치로 부드럽게 이동
-            cube.position.z = THREE.MathUtils.lerp(
-                cube.position.z,
-                cube.userData.targetZ,
-                animationSpeed
-            )
-        })
+            if (cube.userData.isFalling) {
+                // 낙하 애니메이션
+                cube.position.y -= cube.userData.fallSpeed;
+                cube.rotation.x += cube.userData.fallSpeed * 0.1;
+                cube.rotation.z += cube.userData.fallSpeed * 0.1;
+
+                // 바다 높이에 도달하면 회전 멈추기
+                if (cube.position.y <= -4) {
+                    cube.position.y = -4;
+                    cube.userData.isFalling = false;
+                }
+            } else {
+                // 일반적인 z축 이동
+                cube.position.z = THREE.MathUtils.lerp(
+                    cube.position.z,
+                    cube.userData.targetZ,
+                    animationSpeed
+                );
+            }
+        });
 
         // Render
         renderer.render(scene, camera)
