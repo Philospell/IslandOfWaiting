@@ -54,7 +54,7 @@ window.addEventListener('resize', () => {
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 10000)
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 0
 camera.position.y = 0
 camera.position.z = 10
@@ -150,6 +150,28 @@ image.onload = () => {
         }
     }
 
+    /**
+     * Water Surface (Ocean)
+     */
+    const waterTexture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/waternormals.jpg')
+    waterTexture.wrapS = waterTexture.wrapT = THREE.RepeatWrapping
+    waterTexture.repeat.set(10, 10)
+
+    const waterMaterial = new THREE.MeshStandardMaterial({
+        color: 0x4060ff,
+        metalness: 0.3,
+        roughness: 0.2,
+        normalMap: waterTexture,
+        transparent: true,
+        opacity: 0.9
+    })
+
+    const waterGeometry = new THREE.PlaneGeometry(1000, 1000, 100, 100)
+    const water = new THREE.Mesh(waterGeometry, waterMaterial)
+    water.rotation.x = -Math.PI / 2
+    water.position.y = -4
+    scene.add(water)
+
     // 클릭 이벤트 수정
     window.addEventListener('click', () => {
         isScattered = !isScattered
@@ -168,6 +190,7 @@ image.onload = () => {
 
         // Update controls
         controls.update()
+        waterTexture.offset.y += 0.0005
 
         // 큐브 애니메이션 업데이트
         cubes.forEach(cube => {
